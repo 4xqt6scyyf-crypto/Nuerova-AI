@@ -6,6 +6,7 @@
     <title>AI Spend Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://browser.sentry-cdn.com/8.39.0/bundle.min.js" crossorigin="anonymous"></script>
     <script src="/app-config.js"></script>
     <style>
       body {
@@ -206,6 +207,16 @@ trackAI(
       const signupButton = document.getElementById('signup-button');
       const configuredBaseUrl = window.__APP_CONFIG__?.API_BASE_URL || '';
       const apiBaseUrl = configuredBaseUrl.replace(/\/$/, '');
+      const sentryDsn = window.__APP_CONFIG__?.SENTRY_DSN || '';
+      const sentryEnvironment = window.__APP_CONFIG__?.SENTRY_ENVIRONMENT || 'production';
+
+      if (window.Sentry && sentryDsn) {
+        window.Sentry.init({
+          dsn: sentryDsn,
+          environment: sentryEnvironment,
+          tracesSampleRate: 0
+        });
+      }
 
       function renderLucideIcons() {
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -274,6 +285,9 @@ trackAI(
             setSignupMessage('error', data.error || 'Could not sign up right now. Please try again.');
           }
         } catch (_error) {
+          if (window.Sentry) {
+            window.Sentry.captureException(_error);
+          }
           setSignupMessage('error', 'Server unreachable. Please check backend and proxy are running.');
         } finally {
           signupButton.disabled = false;

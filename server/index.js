@@ -9,6 +9,21 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.join(__dirname, '.env') });
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
+let sentry = null;
+if (process.env.SENTRY_DSN) {
+  try {
+    const Sentry = require('@sentry/node');
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'production',
+      tracesSampleRate: Number(process.env.SENTRY_TRACES_SAMPLE_RATE || 0)
+    });
+    sentry = Sentry;
+  } catch (error) {
+    console.error('Failed to initialize Sentry:', error.message);
+  }
+}
+
 const {
   getGoogleSheetsTarget,
   getRecentSignupsFromGoogleSheet,
@@ -37,6 +52,20 @@ const REQUIRED_ENV_VARS = [
 ];
 
 let bootstrapPromise = null;
+
+function reportException(error, context) {
+  if (!error) {
+    return;
+  }
+
+  if (sentry) {
+    sentry.withScope((scope) => {
+      scope.setTag('context', context);
+      scope.setLevel('error');
+      sentry.captureException(error);
+    });
+  }
+}
 
 function validateEnvConfig() {
   const missing = REQUIRED_ENV_VARS.filter((name) => {
@@ -84,6 +113,7 @@ function ensureBootstrap() {
     validateEnvConfig();
     bootstrapPromise = loadSignups().catch((error) => {
       console.error('Failed to load signups during bootstrap:', error.message);
+      reportException(error, 'bootstrap_load_signups');
       signupLog.length = 0;
     });
   }
@@ -175,6 +205,7 @@ async function handleSignup(req, res) {
       console.warn('Signup persisted only in memory for this runtime.');
     } else {
       console.error('Failed to persist signup:', error.message);
+      reportException(error, 'persist_signup');
       return res.status(500).json({ ok: false, error: 'failed to save signup' });
     }
   }
@@ -189,6 +220,7 @@ async function handleSignup(req, res) {
       sheetsSynced = true;
     } catch (error) {
       console.error('Failed to sync signup to Google Sheets:', formatGoogleSheetsError(error));
+      reportException(error, 'google_sheets_signup_sync');
     }
   }
 
@@ -230,7 +262,13 @@ app.post('/api/track', handleTrack);
 
 app.get('/app-config.js', (_req, res) => {
   const configuredBaseUrl = process.env.VITE_API_URL || process.env.NEXT_PUBLIC_API_URL || '';
-  const serialized = JSON.stringify({ API_BASE_URL: configuredBaseUrl });
+  const browserSentryDsn = process.env.SENTRY_BROWSER_DSN || process.env.SENTRY_DSN || '';
+  const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'production';
+  const serialized = JSON.stringify({
+    API_BASE_URL: configuredBaseUrl,
+    SENTRY_DSN: browserSentryDsn,
+    SENTRY_ENVIRONMENT: sentryEnvironment
+  });
 
   res.type('application/javascript');
   res.send(`window.__APP_CONFIG__ = ${serialized};`);
@@ -275,6 +313,7 @@ app.get('/health/sheets', async (_req, res) => {
       error: null
     });
   } catch (error) {
+    reportException(error, 'google_sheets_health_check');
     return res.status(503).json({
       ok: false,
       configured: true,
@@ -310,6 +349,7 @@ app.get('/api/health/sheets', async (_req, res) => {
       error: null
     });
   } catch (error) {
+    reportException(error, 'google_sheets_api_health_check');
     return res.status(503).json({
       ok: false,
       configured: true,
@@ -340,6 +380,7 @@ async function handleSignups(_req, res) {
     });
   } catch (error) {
     console.error('Failed to read signups from Google Sheets:', formatGoogleSheetsError(error));
+    reportException(error, 'google_sheets_read_signups');
     return res.status(503).json({
       ok: false,
       error: 'failed to read signups from google sheets',

@@ -156,6 +156,20 @@ Note on local file persistence:
 - In Vercel, local filesystem writes are ephemeral and runtime-scoped.
 - Signups should be considered persistent only when Google Sheets is configured.
 
+## Reliability (Keep it online)
+
+- Optional Sentry backend env vars:
+  - `SENTRY_DSN`
+  - `SENTRY_ENVIRONMENT`
+  - `SENTRY_TRACES_SAMPLE_RATE` (optional, default `0`)
+- Optional frontend Sentry env var:
+  - `SENTRY_BROWSER_DSN` (falls back to `SENTRY_DSN`)
+- CI smoke workflow runs on push/PR:
+  - `.github/workflows/smoke-reliability.yml`
+- Uptime template files:
+  - `ops/uptime/uptime-checks.example.json`
+  - `ops/uptime/README.md`
+
 ## Codespaces notes
 
 - Backend binds to `0.0.0.0`.

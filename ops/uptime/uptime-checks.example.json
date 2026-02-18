@@ -1,0 +1,25 @@
+{
+  "provider": "uptimerobot-or-betterstack",
+  "checks": [
+    {
+      "name": "nuerova-api-health",
+      "method": "GET",
+      "url": "https://YOUR-VERCEL-URL/api/health",
+      "intervalSeconds": 60,
+      "expectedStatusCodes": [200],
+      "mustContain": "\"ok\":true"
+    },
+    {
+      "name": "nuerova-api-health-sheets",
+      "method": "GET",
+      "url": "https://YOUR-VERCEL-URL/api/health/sheets",
+      "intervalSeconds": 300,
+      "expectedStatusCodes": [200, 503]
+    }
+  ],
+  "alerts": {
+    "channels": ["email", "slack", "sms"],
+    "triggerAfterFailures": 2,
+    "resolveAfterSuccesses": 1
+  }
+}
