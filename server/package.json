@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "sentry:smoke": "node sentry-smoke.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

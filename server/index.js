@@ -1,3 +1,4 @@
+require('./instrument.js');
 require('dotenv').config();
 
 const express = require('express');
@@ -5,24 +6,10 @@ const cors = require('cors');
 const fs = require('fs/promises');
 const path = require('path');
 const dotenv = require('dotenv');
+const Sentry = require('@sentry/node');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-let sentry = null;
-if (process.env.SENTRY_DSN) {
-  try {
-    const Sentry = require('@sentry/node');
-    Sentry.init({
-      dsn: process.env.SENTRY_DSN,
-      environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'production',
-      tracesSampleRate: Number(process.env.SENTRY_TRACES_SAMPLE_RATE || 0)
-    });
-    sentry = Sentry;
-  } catch (error) {
-    console.error('Failed to initialize Sentry:', error.message);
-  }
-}
 
 const {
   getGoogleSheetsTarget,
@@ -58,11 +45,11 @@ function reportException(error, context) {
     return;
   }
 
-  if (sentry) {
-    sentry.withScope((scope) => {
+  if (typeof Sentry.getClient === 'function' && Sentry.getClient()) {
+    Sentry.withScope((scope) => {
       scope.setTag('context', context);
       scope.setLevel('error');
-      sentry.captureException(error);
+      Sentry.captureException(error);
     });
   }
 }
