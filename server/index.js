@@ -30,7 +30,6 @@ const trackEvents = [];
 
 const REQUIRED_ENV_VARS = [
   'GOOGLE_SHEETS_SPREADSHEET_ID',
-  'GOOGLE_SHEETS_RANGE',
   'GOOGLE_SERVICE_ACCOUNT_EMAIL',
   'GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY'
 ];
@@ -44,6 +43,11 @@ function validateEnvConfig() {
   if (missing.length > 0) {
     console.error(`Missing required environment variables for Google Sheets: ${missing.join(', ')}`);
     console.error('Google Sheets sync will stay disabled until these are configured.');
+  }
+
+  if (!process.env.GOOGLE_SHEETS_RANGE) {
+    const fallbackSheetName = process.env.GOOGLE_SHEETS_SHEET_NAME || 'Signups';
+    console.warn(`GOOGLE_SHEETS_RANGE is not set. Falling back to ${fallbackSheetName}!A:B`);
   }
 }
 

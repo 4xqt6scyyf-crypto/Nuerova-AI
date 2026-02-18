@@ -5,7 +5,13 @@ function getSpreadsheetId() {
 }
 
 function getSheetsRange() {
-  return process.env.GOOGLE_SHEETS_RANGE || '';
+  const explicitRange = process.env.GOOGLE_SHEETS_RANGE || '';
+  if (explicitRange.trim().length > 0) {
+    return explicitRange;
+  }
+
+  const fallbackSheetName = process.env.GOOGLE_SHEETS_SHEET_NAME || 'Signups';
+  return `${fallbackSheetName}!A:B`;
 }
 
 function getSheetNameFromRange(rangeValue) {

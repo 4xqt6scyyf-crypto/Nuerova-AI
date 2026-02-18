@@ -136,5 +136,53 @@
     "createdAt": "2026-02-18T03:19:23.961Z",
     "created_at": "2026-02-18T03:19:23.961Z",
     "referrer": "https://bookish-barnacle-7v67px9744gp34vg.github.dev/"
+  },
+  {
+    "email": "mariofunes281@gmail.com",
+    "createdAt": "2026-02-18T03:20:18.528Z",
+    "created_at": "2026-02-18T03:20:18.528Z",
+    "referrer": "https://bookish-barnacle-7v67px9744gp34vg.github.dev/"
+  },
+  {
+    "email": "mariofunes281@gmail.com",
+    "createdAt": "2026-02-18T03:20:41.679Z",
+    "created_at": "2026-02-18T03:20:41.679Z",
+    "referrer": "https://bookish-barnacle-7v67px9744gp34vg.github.dev/"
+  },
+  {
+    "email": "regression-check@example.com",
+    "createdAt": "2026-02-18T03:21:04.192Z",
+    "created_at": "2026-02-18T03:21:04.192Z",
+    "referrer": null
+  },
+  {
+    "email": "sheet-fix-check@example.com",
+    "createdAt": "2026-02-18T03:21:59.161Z",
+    "created_at": "2026-02-18T03:21:59.161Z",
+    "referrer": null
+  },
+  {
+    "email": "sheet-fix-check@example.com",
+    "createdAt": "2026-02-18T03:22:04.953Z",
+    "created_at": "2026-02-18T03:22:04.953Z",
+    "referrer": null
+  },
+  {
+    "email": "explicit-range-check@example.com",
+    "createdAt": "2026-02-18T03:23:14.865Z",
+    "created_at": "2026-02-18T03:23:14.865Z",
+    "referrer": null
+  },
+  {
+    "email": "Mef4468@umo.edu",
+    "createdAt": "2026-02-18T03:23:34.304Z",
+    "created_at": "2026-02-18T03:23:34.304Z",
+    "referrer": "https://bookish-barnacle-7v67px9744gp34vg.github.dev/"
+  },
+  {
+    "email": "Mef4468@umo.edu",
+    "createdAt": "2026-02-18T03:23:58.933Z",
+    "created_at": "2026-02-18T03:23:58.933Z",
+    "referrer": "https://bookish-barnacle-7v67px9744gp34vg.github.dev/"
   }
 ]
