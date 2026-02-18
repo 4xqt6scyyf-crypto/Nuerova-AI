@@ -1,0 +1,17 @@
+{
+  "name": "nuerova-ai",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm run dev:frontend\"",
+    "dev:frontend": "node frontend-dev-server.js",
+    "start": "npm --prefix server start"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
