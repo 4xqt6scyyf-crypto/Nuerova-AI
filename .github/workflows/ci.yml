@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  smoke-test:
+    name: smoke-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure smoke script is executable
+        run: |
+          if [ -f smoke-test.sh ]; then
+            chmod +x smoke-test.sh
+          fi
+          if [ -f server/smoke-test.sh ]; then
+            chmod +x server/smoke-test.sh
+          fi
+
+      - name: Start API
+        run: |
+          PORT=4399 npm --prefix server run dev > /tmp/nuerova-api.log 2>&1 &
+          echo $! > /tmp/nuerova-api.pid
+
+      - name: Wait for health endpoint
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4399/api/health >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not become healthy in time"
+          exit 1
+
+      - name: Run smoke test
+        run: |
+          if [ -f smoke-test.sh ]; then
+            bash smoke-test.sh http://127.0.0.1:4399
+          elif [ -f server/smoke-test.sh ]; then
+            bash server/smoke-test.sh http://127.0.0.1:4399
+          else
+            echo "No smoke-test.sh found at repo root or server/"
+            exit 1
+          fi
+
+      - name: Print API logs
+        if: always()
+        run: |
+          echo "--- API LOGS ---"
+          cat /tmp/nuerova-api.log || true
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f /tmp/nuerova-api.pid ]; then
+            kill "$(cat /tmp/nuerova-api.pid)" || true
+          fi
