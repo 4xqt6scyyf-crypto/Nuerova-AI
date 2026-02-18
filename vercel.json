@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    {
+      "source": "/app-config.js",
+      "destination": "/api/app-config"
+    },
+    {
+      "source": "/signup",
+      "destination": "/api/signup"
+    },
+    {
+      "source": "/track",
+      "destination": "/api/track"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/health/sheets",
+      "destination": "/api/health/sheets"
+    },
+    {
+      "source": "/signups",
+      "destination": "/api/signups"
+    }
+  ]
+}

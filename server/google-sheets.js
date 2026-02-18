@@ -45,7 +45,7 @@ function parseServiceAccount() {
   }
 
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '';
-  const privateKey = normalizePrivateKey(process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '');
+  const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n') || '';
 
   if (!clientEmail || !privateKey) {
     return null;

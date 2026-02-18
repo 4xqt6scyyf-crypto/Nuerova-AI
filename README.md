@@ -127,6 +127,35 @@ Default when not set: empty string (`""`), which means same-origin calls to `/ap
 
 In dev, same-origin is handled by the frontend proxy (`/api/*` -> `http://127.0.0.1:3000`).
 
+## Deploy on Vercel (frontend + API together)
+
+This repository includes `vercel.json` plus explicit serverless API files under `api/` (for example `api/signup.js`, `api/health.js`).
+Deploy the root project directly to Vercel.
+
+Required environment variables in Vercel:
+
+- `GOOGLE_SHEETS_SPREADSHEET_ID`
+- `GOOGLE_SHEETS_RANGE` (example: `Signups!A:B`)
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+- `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` (use escaped newlines like `\n`)
+- `ADMIN_KEY` (optional, only if you enable admin-protected routes)
+
+Google Sheets permissions reminder:
+
+- Share the target Google Sheet with the service account email as **Editor**.
+
+Optional frontend config:
+
+- `VITE_API_URL` (preferred)
+- `NEXT_PUBLIC_API_URL` (fallback)
+
+When not set, frontend calls use same-origin (`/api/*`).
+
+Note on local file persistence:
+
+- In Vercel, local filesystem writes are ephemeral and runtime-scoped.
+- Signups should be considered persistent only when Google Sheets is configured.
+
 ## Codespaces notes
 
 - Backend binds to `0.0.0.0`.

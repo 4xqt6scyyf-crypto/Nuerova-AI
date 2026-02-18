@@ -20,7 +20,9 @@ const {
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
-const SIGNUPS_FILE = path.join(__dirname, 'data', 'signups.json');
+const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+const SIGNUPS_FILE = process.env.SIGNUPS_FILE
+  || (IS_VERCEL ? '/tmp/signups.json' : path.join(__dirname, 'data', 'signups.json'));
 
 app.use(cors());
 app.use(express.json());
@@ -33,6 +35,8 @@ const REQUIRED_ENV_VARS = [
   'GOOGLE_SERVICE_ACCOUNT_EMAIL',
   'GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY'
 ];
+
+let bootstrapPromise = null;
 
 function validateEnvConfig() {
   const missing = REQUIRED_ENV_VARS.filter((name) => {
@@ -70,6 +74,23 @@ function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function isIgnorableFilesystemError(error) {
+  const code = error?.code;
+  return code === 'EROFS' || code === 'EACCES' || code === 'EPERM';
+}
+
+function ensureBootstrap() {
+  if (!bootstrapPromise) {
+    validateEnvConfig();
+    bootstrapPromise = loadSignups().catch((error) => {
+      console.error('Failed to load signups during bootstrap:', error.message);
+      signupLog.length = 0;
+    });
+  }
+
+  return bootstrapPromise;
+}
+
 async function ensureSignupsFile() {
   await fs.mkdir(path.dirname(SIGNUPS_FILE), { recursive: true });
 
@@ -81,7 +102,16 @@ async function ensureSignupsFile() {
 }
 
 async function loadSignups() {
-  await ensureSignupsFile();
+  try {
+    await ensureSignupsFile();
+  } catch (error) {
+    if (isIgnorableFilesystemError(error)) {
+      signupLog.length = 0;
+      return;
+    }
+    throw error;
+  }
+
   const content = await fs.readFile(SIGNUPS_FILE, 'utf8');
   const parsed = JSON.parse(content);
 
@@ -111,6 +141,8 @@ async function persistSignups() {
 }
 
 async function handleSignup(req, res) {
+  await ensureBootstrap();
+
   const { email, referrer: providedReferrer } = req.body || {};
 
   if (!email) {
@@ -139,22 +171,24 @@ async function handleSignup(req, res) {
   try {
     await persistSignups();
   } catch (error) {
-    console.error('Failed to persist signup:', error.message);
-    return res.status(500).json({ ok: false, error: 'failed to save signup' });
+    if (isIgnorableFilesystemError(error)) {
+      console.warn('Signup persisted only in memory for this runtime.');
+    } else {
+      console.error('Failed to persist signup:', error.message);
+      return res.status(500).json({ ok: false, error: 'failed to save signup' });
+    }
   }
 
   const sheetsEnabled = isGoogleSheetsConfigured();
   let sheetsResult = null;
+  let sheetsSynced = false;
 
   if (sheetsEnabled) {
     try {
       sheetsResult = await upsertSignupInGoogleSheet(signupEntry);
+      sheetsSynced = true;
     } catch (error) {
       console.error('Failed to sync signup to Google Sheets:', formatGoogleSheetsError(error));
-      return res.status(500).json({
-        ok: false,
-        error: 'failed to sync signup to google sheets'
-      });
     }
   }
 
@@ -163,7 +197,7 @@ async function handleSignup(req, res) {
     ok: true,
     sheets: {
       enabled: sheetsEnabled,
-      synced: sheetsEnabled,
+      synced: sheetsSynced,
       mode: sheetsResult ? sheetsResult.mode : null
     }
   });
@@ -172,7 +206,7 @@ async function handleSignup(req, res) {
 app.post('/api/signup', handleSignup);
 app.post('/signup', handleSignup);
 
-app.post('/track', (req, res) => {
+function handleTrack(req, res) {
   const { userId, agent, endpoint, provider, cost, metadata } = req.body || {};
 
   const event = {
@@ -189,7 +223,10 @@ app.post('/track', (req, res) => {
   trackEvents.push(event);
 
   return res.status(201).json({ ok: true, event });
-});
+}
+
+app.post('/track', handleTrack);
+app.post('/api/track', handleTrack);
 
 app.get('/app-config.js', (_req, res) => {
   const configuredBaseUrl = process.env.VITE_API_URL || process.env.NEXT_PUBLIC_API_URL || '';
@@ -203,12 +240,15 @@ app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-app.get('/health', (_req, res) => {
+function handleHealth(_req, res) {
   res.status(200).json({
     ok: true,
     sheetsConfigured: isGoogleSheetsConfigured()
   });
-});
+}
+
+app.get('/health', handleHealth);
+app.get('/api/health', handleHealth);
 
 app.get('/health/sheets', async (_req, res) => {
   const configured = isGoogleSheetsConfigured();
@@ -245,7 +285,44 @@ app.get('/health/sheets', async (_req, res) => {
   }
 });
 
-app.get('/signups', async (_req, res) => {
+app.get('/api/health/sheets', async (_req, res) => {
+  const configured = isGoogleSheetsConfigured();
+  const target = getGoogleSheetsTarget();
+
+  if (!configured) {
+    return res.status(200).json({
+      ok: true,
+      configured: false,
+      reachable: false,
+      target,
+      error: null
+    });
+  }
+
+  try {
+    const result = await verifyGoogleSheetsAccess();
+    return res.status(200).json({
+      ok: true,
+      configured: true,
+      reachable: true,
+      target,
+      spreadsheetTitle: result.spreadsheetTitle,
+      error: null
+    });
+  } catch (error) {
+    return res.status(503).json({
+      ok: false,
+      configured: true,
+      reachable: false,
+      target,
+      error: error.message
+    });
+  }
+});
+
+async function handleSignups(_req, res) {
+  await ensureBootstrap();
+
   try {
     if (!isGoogleSheetsConfigured()) {
       return res.status(200).json({
@@ -269,11 +346,13 @@ app.get('/signups', async (_req, res) => {
       signups: []
     });
   }
-});
+}
+
+app.get('/signups', handleSignups);
+app.get('/api/signups', handleSignups);
 
 async function start() {
-  validateEnvConfig();
-  await loadSignups();
+  await ensureBootstrap();
 
   app.listen(PORT, HOST, () => {
     const isCodespaces = Boolean(process.env.CODESPACES);
@@ -284,7 +363,14 @@ async function start() {
   });
 }
 
-start().catch((error) => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-});
+if (require.main === module) {
+  start().catch((error) => {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  app,
+  start
+};
