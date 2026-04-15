@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Status - Nerovai</title>
+<style>
+:root[data-theme="dark"] {
+  --bg: #000; --bg2: #0a0a0a; --card: #141414;
+  --border: rgba(255,255,255,0.08); --text: #f5f5f7;
+  --text2: #a1a1a6; --text3: #6e6e73; --accent: #2997ff;
+  --success: #30d158; --nav-bg: rgba(0,0,0,0.72);
+}
+:root[data-theme="light"] {
+  --bg: #fff; --bg2: #f5f5f7; --card: #fff;
+  --border: rgba(0,0,0,0.08); --text: #1d1d1f;
+  --text2: #6e6e73; --text3: #a1a1a6; --accent: #0071e3;
+  --success: #1d8348; --nav-bg: rgba(255,255,255,0.72);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;min-height:100vh}
+nav{position:sticky;top:0;z-index:100;height:52px;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-0.02em;text-decoration:none}
+.theme-btn{background:none;border:none;cursor:pointer;color:var(--text2);font-size:18px;padding:4px}
+main{max-width:720px;margin:0 auto;padding:60px 24px}
+h1{font-size:48px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
+.subtitle{font-size:17px;color:var(--text2);margin-bottom:48px}
+.status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(48,209,88,0.12);color:var(--success);border:1px solid rgba(48,209,88,0.2);border-radius:980px;padding:8px 16px;font-size:15px;font-weight:500;margin-bottom:40px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.services{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:40px}
+.service{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border)}
+.service:last-child{border-bottom:none}
+.service-name{font-size:15px;font-weight:500}
+.op{color:var(--success);font-size:13px;font-weight:500}
+.incident{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px}
+.incident h2{font-size:22px;font-weight:600;margin-bottom:16px}
+.no-incidents{color:var(--text3);font-size:15px}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);color:var(--text3);font-size:13px}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">Nerovai</a>
+  <button class="theme-btn" id="themeToggle">☀️</button>
+</nav>
+<main>
+  <h1>System Status</h1>
+  <p class="subtitle">Real-time status for all Nerovai services.</p>
+  <div class="status-badge"><span class="dot"></span> All Systems Operational</div>
+  <div class="services">
+    <div class="service"><span class="service-name">API</span><span class="op">Operational</span></div>
+    <div class="service"><span class="service-name">Dashboard</span><span class="op">Operational</span></div>
+    <div class="service"><span class="service-name">SDK Ingestion</span><span class="op">Operational</span></div>
+    <div class="service"><span class="service-name">Database</span><span class="op">Operational</span></div>
+    <div class="service"><span class="service-name">Email Notifications</span><span class="op">Operational</span></div>
+    <div class="service"><span class="service-name">WebSockets</span><span class="op">Operational</span></div>
+  </div>
+  <div class="incident">
+    <h2>Incident History</h2>
+    <p class="no-incidents">No incidents in the last 90 days.</p>
+  </div>
+  <footer><a href="/">nerovai.com</a> · © 2026 Nerovai</footer>
+</main>
+<script>
+const t = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', t);
+document.getElementById('themeToggle').textContent = t === 'dark' ? '☀️' : '🌙';
+document.getElementById('themeToggle').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+};
+</script>
+</body>
+</html>

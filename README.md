@@ -170,6 +170,24 @@ Note on local file persistence:
   - `ops/uptime/uptime-checks.example.json`
   - `ops/uptime/README.md`
 
+## Transactional Email Setup
+
+Waitlist confirmation emails are sent with Resend after successful signup persistence.
+
+Required backend environment variables:
+
+- `RESEND_API_KEY`
+- `EMAIL_FROM` (example: `Nuerova AI <waitlist@nuerova.ai>`)
+
+Optional:
+
+- `PUBLIC_APP_URL`
+
+Behavior notes:
+
+- Email sending is skipped automatically when `CI=true`.
+- Signup still succeeds even if email delivery fails.
+
 ## Codespaces notes
 
 - Backend binds to `0.0.0.0`.

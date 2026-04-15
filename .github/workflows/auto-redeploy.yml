@@ -1,0 +1,161 @@
+name: Auto Redeploy On Health Failure
+
+on:
+  repository_dispatch:
+    types: [health-check-failed]
+  workflow_dispatch:
+
+concurrency:
+  group: auto-redeploy-openclaw
+  cancel-in-progress: false
+
+jobs:
+  auto-redeploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      STATUS_URL: https://install-moltbot-1289.preview.emergentagent.com/api/openclaw/status
+
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Confirm current health
+        id: precheck
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          http_code="$(curl -sS -m 20 -o /tmp/precheck.json -w "%{http_code}" "$STATUS_URL" || echo "000")"
+
+          running="$(python3 - <<'PY'
+import json
+try:
+    with open('/tmp/precheck.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    print('true' if data.get('running') is True else 'false')
+except Exception:
+    print('false')
+PY
+)"
+
+          if [[ "$http_code" != "200" || "$running" != "true" ]]; then
+            down="true"
+            reason="http=$http_code running=$running"
+          else
+            down="false"
+            reason="healthy"
+          fi
+
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "running=$running" >> "$GITHUB_OUTPUT"
+          echo "down=$down" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+          echo "Initial health check: $reason"
+          echo "Response body:"
+          cat /tmp/precheck.json || true
+
+      - name: Validate Vercel secrets
+        if: steps.precheck.outputs.down == 'true'
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          missing=0
+
+          for var in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [[ -z "${!var:-}" ]]; then
+              echo "Missing required secret: $var"
+              missing=1
+            fi
+          done
+
+          if [[ "$missing" -ne 0 ]]; then
+            exit 1
+          fi
+
+      - name: Trigger Vercel redeploy (prod)
+        if: steps.precheck.outputs.down == 'true'
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          npx vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"
+
+      - name: Wait 60 seconds
+        if: steps.precheck.outputs.down == 'true'
+        run: sleep 60
+
+      - name: Verify health after redeploy
+        if: steps.precheck.outputs.down == 'true'
+        id: postcheck
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          http_code="$(curl -sS -m 20 -o /tmp/postcheck.json -w "%{http_code}" "$STATUS_URL" || echo "000")"
+
+          running="$(python3 - <<'PY'
+import json
+try:
+    with open('/tmp/postcheck.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    print('true' if data.get('running') is True else 'false')
+except Exception:
+    print('false')
+PY
+)"
+
+          if [[ "$http_code" == "200" && "$running" == "true" ]]; then
+            recovered="true"
+          else
+            recovered="false"
+          fi
+
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "running=$running" >> "$GITHUB_OUTPUT"
+          echo "recovered=$recovered" >> "$GITHUB_OUTPUT"
+
+          echo "Post-redeploy health: http=$http_code running=$running recovered=$recovered"
+          echo "Response body:"
+          cat /tmp/postcheck.json || true
+
+      - name: Workflow summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Auto Redeploy Result"
+            echo ""
+            echo "- Endpoint: $STATUS_URL"
+            echo "- Initial HTTP: ${{ steps.precheck.outputs.http_code }}"
+            echo "- Initial running: ${{ steps.precheck.outputs.running }}"
+            echo "- Initial down decision: ${{ steps.precheck.outputs.down }}"
+            echo "- Initial reason: ${{ steps.precheck.outputs.reason }}"
+
+            if [[ "${{ steps.precheck.outputs.down }}" == "true" ]]; then
+              echo "- Redeploy attempted: yes"
+              echo "- Post HTTP: ${{ steps.postcheck.outputs.http_code }}"
+              echo "- Post running: ${{ steps.postcheck.outputs.running }}"
+              echo "- Recovered: ${{ steps.postcheck.outputs.recovered }}"
+            else
+              echo "- Redeploy attempted: no (service was healthy)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if still down after redeploy
+        if: steps.precheck.outputs.down == 'true' && steps.postcheck.outputs.recovered != 'true'
+        run: |
+          echo "Service is still unhealthy after redeploy attempt."
+          exit 1

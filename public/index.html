@@ -47,6 +47,15 @@
           </a>
         </div>
 
+        <p class="mt-4 text-sm text-zinc-600">
+          Quick links:
+          <a href="/pricing" class="text-blue-600 hover:text-blue-500">Pricing</a>
+          ·
+          <a href="/docs" class="text-blue-600 hover:text-blue-500">Docs</a>
+          ·
+          <a href="/status" class="text-blue-600 hover:text-blue-500">Status</a>
+        </p>
+
         <p class="mt-4 text-sm text-zinc-500">No credit card required · We never store prompts or responses. We only collect token counts, cost, timestamps, and attribution metadata.</p>
       </header>
 
@@ -205,7 +214,10 @@ trackAI(
       const signupForm = document.getElementById('signup-form');
       const signupMessage = document.getElementById('signup-message');
       const signupButton = document.getElementById('signup-button');
-      const configuredBaseUrl = window.__APP_CONFIG__?.API_BASE_URL || '';
+      const API_BASE = window.location.hostname === 'localhost'
+        ? ''
+        : 'https://api.nerovai.com';
+      const configuredBaseUrl = window.__APP_CONFIG__?.API_BASE_URL || API_BASE;
       const apiBaseUrl = configuredBaseUrl.replace(/\/$/, '');
       const sentryDsn = window.__APP_CONFIG__?.SENTRY_DSN || '';
       const sentryEnvironment = window.__APP_CONFIG__?.SENTRY_ENVIRONMENT || 'production';
@@ -268,7 +280,7 @@ trackAI(
         signupButton.textContent = 'Signing up...';
 
         try {
-          const response = await fetch(`${apiBaseUrl}/signup`, {
+          const response = await fetch(`${apiBaseUrl}/api/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, referrer })
@@ -288,7 +300,7 @@ trackAI(
           if (window.Sentry) {
             window.Sentry.captureException(_error);
           }
-          setSignupMessage('error', 'Server unreachable. Please check backend and proxy are running.');
+          setSignupMessage('error', 'Server unreachable. Please try again shortly.');
         } finally {
           signupButton.disabled = false;
           signupButton.textContent = 'Join Free Beta';

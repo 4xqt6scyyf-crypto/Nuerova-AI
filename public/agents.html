@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent HQ — Nerovai</title>
+  <link rel="stylesheet" href="agents.css">
+</head>
+<body>
+
+<div id="hq-root">
+
+  <!-- ══ HEADER ════════════════════════════════════════════════════════════ -->
+  <header id="hq-header">
+    <a class="hq-logo" href="/app">
+      <span class="hq-logo-dot"></span>
+      NEROVAI HQ
+    </a>
+    <div class="hq-divider"></div>
+    <span class="hq-tagline">Agent Operations Center</span>
+
+    <div class="hq-stats">
+      <div class="hq-stat-item">
+        <span class="hq-stat-value" id="stat-active">0</span>
+        <span class="hq-stat-label">Active</span>
+      </div>
+      <div class="hq-stat-item">
+        <span class="hq-stat-value" id="stat-tasks">0</span>
+        <span class="hq-stat-label">Tasks</span>
+      </div>
+      <div class="hq-stat-item">
+        <span class="hq-stat-value" id="stat-uptime">—</span>
+        <span class="hq-stat-label">Uptime</span>
+      </div>
+    </div>
+
+    <span id="hq-clock">—</span>
+
+    <nav class="hq-nav">
+      <a href="/app">Dashboard</a>
+      <a href="/agents" class="active">Agent HQ</a>
+      <a href="/docs">Docs</a>
+    </nav>
+  </header>
+
+  <!-- ══ OFFICE ENVIRONMENT ════════════════════════════════════════════════ -->
+  <div id="office-env">
+
+    <!-- Main Floor Label -->
+    <div class="floor-label">Main Floor — Agent Workstations</div>
+
+    <!-- ══ WORKSPACE GRID (3×3) ══════════════════════════════════════════ -->
+    <div id="workspace-grid">
+
+      <!-- ─ ARCHI (Premium Glass Office) ─────────────────────────────── -->
+      <div class="workstation tier-premium" data-id="archi" onclick="openInspect('archi')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-xl">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-code"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">📐</span><span class="di">☕</span><span class="di">📋</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-archi">
+              <div class="agent-char char-anim-work" id="char-archi">
+                <div class="char-head skin-b">
+                  <div class="char-hair hair-dark-neat"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-glasses"></div>
+                </div>
+                <div class="char-torso shirt-blazer-navy">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#1a3a6a"></div>
+                    <div class="char-arm r" style="background:#1a3a6a"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg dark"></div><div class="char-leg dark"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-archi"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-archi"></div>
+              <span class="ws-name">Archi</span>
+            </div>
+            <div class="ws-role">Head of Systems Intelligence</div>
+            <div class="ws-task" id="task-archi">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-archi" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ STACK (Messy Dev Desk / Multi-screen) ─────────────────────── -->
+      <div class="workstation tier-senior" data-id="stack" onclick="openInspect('stack')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-sm angled-left">
+                  <div class="monitor-screen"><div class="screen-fill sc-code-green"></div></div>
+                  <div class="monitor-stand"></div>
+                </div>
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-matrix"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+                <div class="monitor sz-sm angled-right">
+                  <div class="monitor-screen"><div class="screen-fill sc-chart"></div></div>
+                  <div class="monitor-stand"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🔧</span><span class="di">📡</span><span class="di">🥤</span><span class="di">📎</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-stack">
+              <div class="agent-char char-anim-deploy" id="char-stack">
+                <div class="char-head skin-c">
+                  <div class="char-hair hair-black-messy"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-headphones"></div>
+                </div>
+                <div class="char-torso shirt-hoodie-gray">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#3a3a4a"></div>
+                    <div class="char-arm r" style="background:#3a3a4a"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg dark"></div><div class="char-leg dark"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-stack"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot deploying" id="dot-stack"></div>
+              <span class="ws-name">Stack</span>
+            </div>
+            <div class="ws-role">Infrastructure Specialist</div>
+            <div class="ws-task" id="task-stack">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-stack" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ PIXEL (Ultra Clean Design Desk) ─────────────────────────────── -->
+      <div class="workstation" data-id="pixel" onclick="openInspect('pixel')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-design"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+                <div class="monitor sz-md">
+                  <div class="monitor-screen"><div class="screen-fill sc-design"></div></div>
+                  <div class="monitor-stand"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🎨</span><span class="di">✏️</span><span class="di">🌸</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-pixel">
+              <div class="agent-char char-anim-idle" id="char-pixel">
+                <div class="char-head skin-a">
+                  <div class="char-hair hair-purple"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                </div>
+                <div class="char-torso shirt-tee-white">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#d0d0e0"></div>
+                    <div class="char-arm r" style="background:#d0d0e0"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg" style="background:#6d28d9"></div>
+                  <div class="char-leg" style="background:#6d28d9"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-pixel"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-pixel"></div>
+              <span class="ws-name">Pixel</span>
+            </div>
+            <div class="ws-role">Interface Experience Designer</div>
+            <div class="ws-task" id="task-pixel">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-pixel" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ CASH (Flashy Gold-Themed Finance Desk) ──────────────────────── -->
+      <div class="workstation tier-premium" data-id="cash" onclick="openInspect('cash')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-finance"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+                <div class="monitor sz-sm">
+                  <div class="monitor-screen"><div class="screen-fill sc-chart"></div></div>
+                  <div class="monitor-stand"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">💰</span><span class="di">📈</span><span class="di">🏆</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-cash">
+              <div class="agent-char char-anim-work" id="char-cash">
+                <div class="char-head skin-d">
+                  <div class="char-hair hair-slick-back"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-crown">👑</div>
+                </div>
+                <div class="char-torso shirt-gold">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#a06010"></div>
+                    <div class="char-arm r" style="background:#a06010"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg dark"></div><div class="char-leg dark"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-cash"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-cash"></div>
+              <span class="ws-name">Cash</span>
+            </div>
+            <div class="ws-role">Revenue & Growth Intelligence</div>
+            <div class="ws-task" id="task-cash">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-cash" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ BUGSY (Paranoid QA Corner) ──────────────────────────────────── -->
+      <div class="workstation" data-id="bugsy" onclick="openInspect('bugsy')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-matrix"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🔍</span><span class="di">🐛</span><span class="di">📝</span><span class="di">⚠️</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-bugsy">
+              <div class="agent-char char-anim-idle" id="char-bugsy">
+                <div class="char-head skin-a">
+                  <div class="char-hair hair-red-spiky"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-magnifier">🔍</div>
+                </div>
+                <div class="char-torso shirt-tactical">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#2a3a1a"></div>
+                    <div class="char-arm r" style="background:#2a3a1a"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg khaki"></div><div class="char-leg khaki"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-bugsy"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot thinking" id="dot-bugsy"></div>
+              <span class="ws-name">Bugsy</span>
+            </div>
+            <div class="ws-role">QA & Security Testing</div>
+            <div class="ws-task" id="task-bugsy">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-bugsy" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ DELTA (Research Lab Desk) ───────────────────────────────────── -->
+      <div class="workstation" data-id="delta" onclick="openInspect('delta')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-lab"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🧪</span><span class="di">🔬</span><span class="di">📊</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-delta">
+              <div class="agent-char char-anim-work" id="char-delta">
+                <div class="char-head skin-b">
+                  <div class="char-hair hair-auburn"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                </div>
+                <div class="char-torso shirt-labcoat">
+                  <div class="char-collar" style="border-top-color:rgba(0,0,0,0.1)"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#d5d5e8"></div>
+                    <div class="char-arm r" style="background:#d5d5e8"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg" style="background:#2a3a5a"></div>
+                  <div class="char-leg" style="background:#2a3a5a"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-delta"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-delta"></div>
+              <span class="ws-name">Delta</span>
+            </div>
+            <div class="ws-role">Data Research & Analytics</div>
+            <div class="ws-task" id="task-delta">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-delta" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ LAUNCH (Rocket-Themed Ops Desk) ────────────────────────────── -->
+      <div class="workstation" data-id="launch" onclick="openInspect('launch')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-space"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🚀</span><span class="di">⭐</span><span class="di">🎯</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-launch">
+              <div class="agent-char char-anim-deploy" id="char-launch">
+                <div class="char-head skin-e">
+                  <div class="char-hair hair-black-short"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-visor"></div>
+                </div>
+                <div class="char-torso shirt-spacesuit">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#c25010"></div>
+                    <div class="char-arm r" style="background:#c25010"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg orange"></div><div class="char-leg orange"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-launch"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-launch"></div>
+              <span class="ws-name">Launch</span>
+            </div>
+            <div class="ws-role">Deployment Operations</div>
+            <div class="ws-task" id="task-launch">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-launch" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ GUARD (Security Monitoring Desk) ───────────────────────────── -->
+      <div class="workstation" data-id="guard" onclick="openInspect('guard')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen"><div class="screen-fill sc-cctv"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🔒</span><span class="di">📷</span><span class="di">🚨</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-guard">
+              <div class="agent-char char-anim-idle" id="char-guard">
+                <div class="char-head skin-c">
+                  <div class="char-hair hair-fade"></div>
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth"></div>
+                  <div class="acc acc-badge"></div>
+                </div>
+                <div class="char-torso shirt-uniform">
+                  <div class="char-collar"></div>
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#1a1a2a"></div>
+                    <div class="char-arm r" style="background:#1a1a2a"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg dark"></div><div class="char-leg dark"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-guard"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-guard"></div>
+              <span class="ws-name">Guard</span>
+            </div>
+            <div class="ws-role">Security & Compliance</div>
+            <div class="ws-task" id="task-guard">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-guard" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─ NOVA (AI Core Robot Desk) ──────────────────────────────────── -->
+      <div class="workstation tier-premium" data-id="nova" onclick="openInspect('nova')">
+        <div class="ws-inner">
+          <div class="desk-zone">
+            <div class="desk-surface">
+              <div class="monitor-setup">
+                <div class="monitor sz-lg">
+                  <div class="monitor-screen glowing"><div class="screen-fill sc-ai"></div></div>
+                  <div class="monitor-stand"></div>
+                  <div class="monitor-base"></div>
+                </div>
+                <div class="monitor sz-sm">
+                  <div class="monitor-screen"><div class="screen-fill sc-code"></div></div>
+                  <div class="monitor-stand"></div>
+                </div>
+              </div>
+              <div class="desk-keyboard"></div>
+              <div class="desk-items">
+                <span class="di">🤖</span><span class="di">⚡</span><span class="di">🧠</span>
+              </div>
+            </div>
+            <div class="agent-char-wrap" id="charwrap-nova">
+              <div class="agent-char char-anim-work" id="char-nova">
+                <div class="char-head skin-robot">
+                  <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+                  <div class="char-mouth" style="border-bottom-color:rgba(64,196,255,0.4)"></div>
+                  <div class="acc acc-antenna"></div>
+                </div>
+                <div class="char-torso shirt-robotic">
+                  <div class="char-arms">
+                    <div class="char-arm l" style="background:#2a4a6a;border:1px solid rgba(91,141,238,0.3)"></div>
+                    <div class="char-arm r" style="background:#2a4a6a;border:1px solid rgba(91,141,238,0.3)"></div>
+                  </div>
+                </div>
+                <div class="char-legs">
+                  <div class="char-leg" style="background:#1a3a5a;border-left:1px solid rgba(91,141,238,0.2)"></div>
+                  <div class="char-leg" style="background:#1a3a5a;border-right:1px solid rgba(91,141,238,0.2)"></div>
+                </div>
+                <div class="char-shadow"></div>
+              </div>
+              <div class="speech-bubble" id="sb-nova"></div>
+            </div>
+          </div>
+          <div class="ws-label">
+            <div class="ws-name-row">
+              <div class="status-dot working" id="dot-nova"></div>
+              <span class="ws-name">Nova</span>
+            </div>
+            <div class="ws-role">AI Core & Model Orchestration</div>
+            <div class="ws-task" id="task-nova">Loading…</div>
+            <div class="ws-progress"><div class="ws-progress-fill" id="prog-nova" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /#workspace-grid -->
+
+    <!-- ══ BREAK ROOM ═════════════════════════════════════════════════════ -->
+    <div class="br-divider-row">☕ BREAK ROOM</div>
+
+    <div id="break-room">
+      <!-- Coffee Machine -->
+      <div class="br-station" id="br-coffee" onclick="triggerCoffee()" title="Brew coffee">
+        <div class="br-station-visual coffee-bg large">☕</div>
+        <div class="br-station-label">Brew-O-Matic</div>
+      </div>
+
+      <!-- Vending Machine -->
+      <div class="br-station" id="br-vending" onclick="triggerVending()" title="Get a snack">
+        <div class="br-station-visual vend-bg medium">🍫</div>
+        <div class="br-station-label">Snack Station</div>
+      </div>
+
+      <!-- Lounge -->
+      <div class="br-station" onclick="showToast('🛋 Someone is lounging…')" title="Lounge zone">
+        <div class="br-station-visual lounge-bg medium">🛋</div>
+        <div class="br-station-label">Lounge Zone</div>
+      </div>
+
+      <!-- Pizza Corner -->
+      <div class="br-station" onclick="triggerPizza()" title="Pizza corner">
+        <div class="br-station-visual pizza-bg medium">🍕</div>
+        <div class="br-station-label">Pizza Corner</div>
+      </div>
+
+      <div class="br-sep"></div>
+
+      <!-- Break room visitors -->
+      <div id="br-visitors"></div>
+    </div>
+
+  </div><!-- /#office-env -->
+
+  <!-- ══ LIVE FEED BAR ══════════════════════════════════════════════════════ -->
+  <div id="feed-bar">
+    <div id="feed-header">
+      <div class="feed-live-dot"></div>
+      <span class="feed-label">Live Feed</span>
+    </div>
+    <div id="feed-ticker">
+      <div id="feed-track">
+        <span class="feed-item">
+          <span class="feed-agent-tag">Nerovai HQ</span>
+          <span class="feed-dot-sep"></span>
+          <span>Loading activity feed…</span>
+        </span>
+        <span class="feed-item">
+          <span class="feed-agent-tag">System</span>
+          <span class="feed-dot-sep"></span>
+          <span>Agents initializing…</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#hq-root -->
+
+<!-- ══ INSPECTION PANEL ══════════════════════════════════════════════════════ -->
+<div id="inspect-overlay" onclick="closeInspect()"></div>
+
+<div id="inspect-panel">
+  <div class="inspect-top">
+    <div class="inspect-avatar-box" id="inspect-avatar"></div>
+    <div class="inspect-info">
+      <div class="inspect-name" id="inspect-name">—</div>
+      <div class="inspect-role" id="inspect-role">—</div>
+      <div class="inspect-personality" id="inspect-personality">—</div>
+    </div>
+    <button class="inspect-close-btn" onclick="closeInspect()">✕</button>
+  </div>
+  <div class="inspect-tabs">
+    <button class="itab active" onclick="switchTab('overview')">Overview</button>
+    <button class="itab" onclick="switchTab('logs')">Logs</button>
+    <button class="itab" onclick="switchTab('actions')">Actions</button>
+  </div>
+  <div id="inspect-body"></div>
+</div>
+
+<!-- ══ OVERLAYS ═══════════════════════════════════════════════════════════════ -->
+<div id="event-banner"></div>
+<div id="toast-wrap"></div>
+
+<script>
+  window.API_BASE =
+    window.location.hostname === 'localhost'
+      ? ''
+      : 'https://api.nerovai.com';
+</script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+<script src="agents.js"></script>
+</body>
+</html>

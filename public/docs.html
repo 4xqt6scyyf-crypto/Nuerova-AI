@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs - Nerovai</title>
+  <meta name="description" content="Nerovai documentation. Get up and running in 60 seconds. SDK reference, API reference, and provider support." />
+  <style>
+    /* CSS VARIABLES */
+    :root {
+      --bg: #000;
+      --bg2: #0a0a0a;
+      --card: #141414;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.12);
+      --text: #f5f5f7;
+      --text2: #a1a1a6;
+      --text3: #6e6e73;
+      --accent: #2997ff;
+      --accent-hover: #147ce5;
+      --success: #30d158;
+      --warning: #ffd60a;
+      --error: #ff453a;
+      --nav-bg: rgba(0,0,0,0.72);
+      --sidebar-bg: #0a0a0a;
+      color-scheme: dark;
+    }
+    [data-theme="light"] {
+      --bg: #fff;
+      --bg2: #f5f5f7;
+      --card: #fff;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.12);
+      --text: #1d1d1f;
+      --text2: #6e6e73;
+      --text3: #a1a1a6;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --success: #1d8348;
+      --warning: #b8860b;
+      --error: #d93025;
+      --nav-bg: rgba(255,255,255,0.72);
+      --sidebar-bg: #f5f5f7;
+      color-scheme: light;
+    }
+
+    /* RESET & BASE */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* PAGE LOAD */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    body { animation: fadeUp 0.3s ease forwards; }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: 52px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin: 0 auto;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text2);
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--text); font-weight: 500; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .nav-login {
+      font-size: 14px;
+      color: var(--text2);
+      transition: color 0.2s ease;
+    }
+    .nav-login:hover { color: var(--text); }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 980px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: scale(1.02); }
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .theme-toggle:hover { background: var(--border); color: var(--text); }
+
+    /* LAYOUT */
+    .docs-layout {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      padding: 28px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      transition: background 0.3s ease;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .sidebar-section {
+      margin-bottom: 4px;
+    }
+    .sidebar-group-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 12px 20px 6px;
+    }
+    .sidebar-link {
+      display: block;
+      font-size: 14px;
+      color: var(--text2);
+      padding: 7px 20px;
+      border-radius: 0;
+      transition: color 0.2s ease, background 0.2s ease;
+      border-left: 2px solid transparent;
+      cursor: pointer;
+    }
+    .sidebar-link:hover { color: var(--text); background: var(--border); }
+    .sidebar-link.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(41,151,255,0.06);
+      font-weight: 500;
+    }
+    [data-theme="light"] .sidebar-link.active {
+      background: rgba(0,113,227,0.06);
+    }
+
+    /* MAIN CONTENT */
+    .docs-main {
+      flex: 1;
+      min-width: 0;
+      padding: 52px 64px 96px;
+    }
+
+    /* DOC SECTIONS */
+    .doc-section {
+      margin-bottom: 80px;
+      scroll-margin-top: 72px;
+    }
+    .doc-section:last-child { margin-bottom: 0; }
+
+    .doc-eyebrow {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .doc-h1 {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .doc-h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      margin-top: 40px;
+    }
+    .doc-h2:first-child { margin-top: 0; }
+    .doc-h3 {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      margin-top: 32px;
+    }
+    .doc-p {
+      font-size: 16px;
+      color: var(--text2);
+      line-height: 1.75;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .doc-p a { color: var(--accent); }
+    .doc-p a:hover { text-decoration: underline; }
+    .doc-lead {
+      font-size: 19px;
+      color: var(--text2);
+      line-height: 1.65;
+      max-width: 580px;
+      margin-bottom: 32px;
+    }
+    .doc-divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+    /* CALLOUT */
+    .callout {
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout.info { border-color: rgba(41,151,255,0.3); background: rgba(41,151,255,0.06); }
+    .callout.success { border-color: rgba(48,209,88,0.3); background: rgba(48,209,88,0.06); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text { font-size: 14px; color: var(--text2); line-height: 1.6; }
+    .callout-text strong { color: var(--text); }
+
+    /* CODE BLOCKS */
+    .code-wrap { margin: 20px 0; }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      padding: 8px 14px;
+    }
+    [data-theme="light"] .code-header { background: #1a1a2e; border-color: rgba(255,255,255,0.06); }
+    .code-lang { font-size: 11px; color: #6e6e73; font-family: "SF Mono", "Menlo", monospace; letter-spacing: 0.04em; }
+    .code-copy {
+      font-size: 11px;
+      color: #6e6e73;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .code-copy:hover { background: rgba(255,255,255,0.06); color: #a1a1a6; }
+    .code-block {
+      background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 20px 20px;
+      font-family: "SF Mono", "Fira Code", "Menlo", monospace;
+      font-size: 13.5px;
+      color: #e2e8f0;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.7;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+    [data-theme="light"] .code-block { background: #1a1a2e; border-color: rgba(255,255,255,0.06); }
+    .code-block-joined {
+      border-radius: 0 0 10px 10px;
+    }
+    .code-block::-webkit-scrollbar { height: 4px; }
+    .code-block::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* Syntax colors */
+    .kw  { color: #ff79c6; }
+    .fn  { color: #50fa7b; }
+    .str { color: #f1fa8c; }
+    .num { color: #bd93f9; }
+    .cm  { color: #6272a4; }
+    .cl  { color: #8be9fd; }
+    .op  { color: #ff79c6; }
+    .prop{ color: #66d9e8; }
+    .val { color: #ffb86c; }
+
+    /* INLINE CODE */
+    code {
+      font-family: "SF Mono", "Fira Code", "Menlo", monospace;
+      font-size: 13px;
+      background: var(--card);
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      padding: 2px 7px;
+      color: var(--accent);
+    }
+
+    /* PARAM TABLE */
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .param-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-strong);
+    }
+    .param-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-table tr:hover td { background: var(--card); }
+    .param-name { font-family: "SF Mono","Menlo",monospace; color: var(--accent); font-size: 13px; }
+    .param-type { color: var(--text3); font-size: 12px; font-family: "SF Mono","Menlo",monospace; }
+    .param-optional { color: var(--text3); font-size: 12px; }
+    .param-desc { color: var(--text2); }
+
+    /* API TABLE */
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    .api-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-strong);
+      background: var(--bg2);
+    }
+    .api-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text2);
+    }
+    .api-table tr:last-child td { border-bottom: none; }
+    .api-table tr:hover td { background: var(--card); }
+    .method-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-family: "SF Mono","Menlo",monospace;
+    }
+    .method-get { background: rgba(48,209,88,0.12); color: #30d158; }
+    .method-post { background: rgba(41,151,255,0.12); color: #2997ff; }
+    .method-delete { background: rgba(255,69,58,0.12); color: #ff453a; }
+    .api-path { font-family: "SF Mono","Menlo",monospace; font-size: 13px; color: var(--text); }
+    .auth-yes { color: var(--success); font-size: 13px; }
+    .auth-no  { color: var(--text3); font-size: 13px; }
+
+    /* PROVIDER TABLE */
+    .provider-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    .provider-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-strong);
+      background: var(--bg2);
+    }
+    .provider-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text2);
+    }
+    .provider-table tr:last-child td { border-bottom: none; }
+    .provider-table tr:hover td { background: var(--card); }
+    .provider-name { color: var(--text); font-weight: 500; }
+    .check-yes { color: var(--success); font-size: 16px; }
+    .check-no  { color: var(--text3); font-size: 16px; }
+
+    /* ENV TABLE */
+    .env-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    .env-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-strong);
+      background: var(--bg2);
+    }
+    .env-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text2);
+    }
+    .env-table tr:last-child td { border-bottom: none; }
+    .env-name { font-family: "SF Mono","Menlo",monospace; color: var(--warning); font-size: 13px; }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: left;
+      padding: 20px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: color 0.2s ease;
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-icon {
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--text3);
+      flex-shrink: 0;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--accent); }
+    .faq-a {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding-bottom 0.3s ease;
+    }
+    .faq-item.open .faq-a { max-height: 400px; padding-bottom: 20px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .docs-main { padding: 32px 24px 80px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .doc-h1 { font-size: 30px; }
+      .api-table, .provider-table { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/landing.html" class="nav-logo">Nerovai</a>
+      <ul class="nav-links">
+        <li><a href="/landing.html#features">Features</a></li>
+        <li><a href="/landing.html#pricing">Pricing</a></li>
+        <li><a href="/docs.html" class="active">Docs</a></li>
+        <li><a href="/landing.html#status">Status</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="/app" class="nav-login">Log in</a>
+        <a href="/app" class="btn-primary">Start for Free</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light/dark">
+          <span id="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-layout">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-group-label">Introduction</div>
+        <a class="sidebar-link active" data-target="getting-started" onclick="scrollTo('getting-started')">Getting Started</a>
+        <a class="sidebar-link" data-target="installation" onclick="scrollTo('installation')">Installation</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-group-label">Reference</div>
+        <a class="sidebar-link" data-target="sdk-reference" onclick="scrollTo('sdk-reference')">SDK Reference</a>
+        <a class="sidebar-link" data-target="api-reference" onclick="scrollTo('api-reference')">API Reference</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-group-label">Guides</div>
+        <a class="sidebar-link" data-target="providers" onclick="scrollTo('providers')">Providers</a>
+        <a class="sidebar-link" data-target="faq" onclick="scrollTo('faq')">FAQ</a>
+      </div>
+    </aside>
+
+    <main class="docs-main">
+
+      <section class="doc-section" id="getting-started">
+        <div class="doc-eyebrow">Introduction</div>
+        <h1 class="doc-h1">Getting Started</h1>
+        <p class="doc-lead">Nerovai is a lightweight SDK that sits between your application and any AI provider - tracking tokens, costs, and latency in real time. Setup takes two minutes.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">🔒</span>
+          <div class="callout-text"><strong>Privacy first.</strong> Nerovai only tracks metadata - model name, token counts, cost, latency, and timestamps. Your prompts, completions, and user data are never sent to our servers.</div>
+        </div>
+
+        <h2 class="doc-h2">What Nerovai tracks</h2>
+        <p class="doc-p">For every AI API call wrapped with <code>track()</code>, Nerovai captures:</p>
+
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="param-name">provider</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">Auto-detected from the API base URL (e.g. "openai", "anthropic")</td>
+            </tr>
+            <tr>
+              <td class="param-name">model</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">The model identifier from the response (e.g. "gpt-4o")</td>
+            </tr>
+            <tr>
+              <td class="param-name">tokens_in</td>
+              <td class="param-type">number</td>
+              <td class="param-desc">Prompt / input tokens consumed</td>
+            </tr>
+            <tr>
+              <td class="param-name">tokens_out</td>
+              <td class="param-type">number</td>
+              <td class="param-desc">Completion / output tokens generated</td>
+            </tr>
+            <tr>
+              <td class="param-name">cost_usd</td>
+              <td class="param-type">number</td>
+              <td class="param-desc">Calculated cost in USD based on current published pricing</td>
+            </tr>
+            <tr>
+              <td class="param-name">latency_ms</td>
+              <td class="param-type">number</td>
+              <td class="param-desc">End-to-end wall-clock time from call start to response received</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 class="doc-h2">2-minute quickstart</h2>
+        <p class="doc-p">Install the package, set your API key, and wrap your first call. That's it - your dashboard starts populating immediately.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">npm</span> install nerovai</div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined">NEROVAI_API_KEY=<span class="str">nrv_your_api_key_here</span></div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">const</span> { <span class="fn">track</span> } = <span class="fn">require</span>(<span class="str">'nerovai'</span>)
+<span class="kw">const</span> <span class="cl">OpenAI</span> = <span class="fn">require</span>(<span class="str">'openai'</span>)
+
+<span class="kw">const</span> openai = <span class="kw">new</span> <span class="cl">OpenAI</span>()
+
+<span class="cm">// Just wrap your existing call with track() - nothing else changes</span>
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">track</span>(
+  openai.chat.completions.<span class="fn">create</span>({
+    <span class="prop">model</span>: <span class="str">'gpt-4o'</span>,
+    <span class="prop">messages</span>: [{ <span class="prop">role</span>: <span class="str">'user'</span>, <span class="prop">content</span>: <span class="str">'Hello'</span> }]
+  }),
+  { <span class="prop">project_id</span>: <span class="str">'your-project-id'</span> }
+)
+
+<span class="cm">// response is untouched - use it exactly as before</span>
+console.<span class="fn">log</span>(response.choices[<span class="num">0</span>].message.content)</div>
+        </div>
+
+        <div class="callout success">
+          <span class="callout-icon">✓</span>
+          <div class="callout-text"><strong>That's it.</strong> Open your dashboard at <a href="/app" style="color:var(--accent);">/app</a> and you'll see your first tracked call within seconds.</div>
+        </div>
+      </section>
+
+      <div class="doc-divider"></div>
+
+      <section class="doc-section" id="installation">
+        <div class="doc-eyebrow">Setup</div>
+        <h1 class="doc-h1">Installation</h1>
+        <p class="doc-lead">Nerovai works in any Node.js environment - Express, Next.js, serverless functions, CLI scripts, anything.</p>
+
+        <h2 class="doc-h2">Install the package</h2>
+        <p class="doc-p">Install from npm. We recommend pinning to a minor version.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="cm"># npm</span>
+<span class="kw">npm</span> install nerovai
+
+<span class="cm"># yarn</span>
+<span class="kw">yarn</span> add nerovai
+
+<span class="cm"># pnpm</span>
+<span class="kw">pnpm</span> add nerovai</div>
+        </div>
+
+        <h2 class="doc-h2">Configure your API key</h2>
+        <p class="doc-p">Get your API key from the dashboard at <a href="/app">/app</a> → Settings → API Keys. Then set it as an environment variable:</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">.env</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined">NEROVAI_API_KEY=<span class="str">nrv_your_api_key_here</span>
+<span class="cm"># Optional: override the default endpoint</span>
+NEROVAI_ENDPOINT=<span class="str">https://api.nerovai.com</span></div>
+        </div>
+
+        <div class="callout info">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-text">The SDK reads <code>NEROVAI_API_KEY</code> automatically on startup. You can also pass the key explicitly via <code>require('nerovai').init({ apiKey: '...' })</code> if you prefer programmatic config.</div>
+        </div>
+
+        <h2 class="doc-h2">Complete working example</h2>
+        <p class="doc-p">Below is a full example with OpenAI. The pattern is identical for every other provider - just swap the client.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="cm">// example.js</span>
+<span class="kw">require</span>(<span class="str">'dotenv/config'</span>)
+<span class="kw">const</span> { <span class="fn">track</span>, <span class="fn">calculateCost</span> } = <span class="fn">require</span>(<span class="str">'nerovai'</span>)
+<span class="kw">const</span> <span class="cl">OpenAI</span> = <span class="fn">require</span>(<span class="str">'openai'</span>)
+
+<span class="kw">const</span> openai = <span class="kw">new</span> <span class="cl">OpenAI</span>()
+
+<span class="kw">async function</span> <span class="fn">main</span>() {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">track</span>(
+    openai.chat.completions.<span class="fn">create</span>({
+      <span class="prop">model</span>: <span class="str">'gpt-4o'</span>,
+      <span class="prop">messages</span>: [
+        { <span class="prop">role</span>: <span class="str">'system'</span>, <span class="prop">content</span>: <span class="str">'You are a helpful assistant.'</span> },
+        { <span class="prop">role</span>: <span class="str">'user'</span>,   <span class="prop">content</span>: <span class="str">'Summarise the Gettysburg Address in 3 bullets.'</span> }
+      ]
+    }),
+    {
+      <span class="prop">project_id</span>:    <span class="str">'my-summarizer'</span>,
+      <span class="prop">endpoint_name</span>: <span class="str">'summarize'</span>,
+      <span class="prop">metadata</span>:      { <span class="prop">user_id</span>: <span class="str">'u_123'</span>, <span class="prop">env</span>: <span class="str">'production'</span> }
+    }
+  )
+
+  console.<span class="fn">log</span>(response.choices[<span class="num">0</span>].message.content)
+}
+
+<span class="fn">main</span>()</div>
+        </div>
+
+        <h2 class="doc-h2">TypeScript</h2>
+        <p class="doc-p">Nerovai ships with full TypeScript definitions. No <code>@types</code> package needed.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">import</span> { <span class="fn">track</span> } <span class="kw">from</span> <span class="str">'nerovai'</span>
+<span class="kw">import</span> <span class="cl">OpenAI</span> <span class="kw">from</span> <span class="str">'openai'</span>
+
+<span class="kw">const</span> openai = <span class="kw">new</span> <span class="cl">OpenAI</span>()
+
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">track</span>&lt;<span class="cl">OpenAI.Chat.ChatCompletion</span>&gt;(
+  openai.chat.completions.<span class="fn">create</span>({
+    <span class="prop">model</span>: <span class="str">'gpt-4o'</span>,
+    <span class="prop">messages</span>: [{ <span class="prop">role</span>: <span class="str">'user'</span>, <span class="prop">content</span>: <span class="str">'Hello'</span> }]
+  }),
+  { <span class="prop">project_id</span>: <span class="str">'my-project'</span> }
+)
+<span class="cm">// response is typed as OpenAI.Chat.ChatCompletion</span></div>
+        </div>
+      </section>
+
+      <div class="doc-divider"></div>
+
+      <section class="doc-section" id="sdk-reference">
+        <div class="doc-eyebrow">SDK</div>
+        <h1 class="doc-h1">SDK Reference</h1>
+        <p class="doc-lead">The Nerovai SDK exports two primary functions and an optional initialiser.</p>
+
+        <h2 class="doc-h2"><code>track(operation, options?)</code></h2>
+        <p class="doc-p">Wraps an AI API call, captures its metadata, and streams the data to your Nerovai dashboard. Returns the original API response completely untouched - your existing code needs zero changes beyond adding the wrapper.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">function</span> <span class="fn">track</span>&lt;T&gt;(
+  <span class="prop">operation</span>: <span class="cl">Promise</span>&lt;T&gt;,
+  <span class="prop">options</span>?: <span class="cl">TrackOptions</span>
+): <span class="cl">Promise</span>&lt;T&gt;</div>
+        </div>
+
+        <h3 class="doc-h3">Parameters</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="param-name">operation</td>
+              <td class="param-type">Promise&lt;T&gt;</td>
+              <td class="param-type">required</td>
+              <td class="param-desc">The AI API call to track. Pass the Promise directly - do not <code>await</code> it before passing.</td>
+            </tr>
+            <tr>
+              <td class="param-name">options.project_id</td>
+              <td class="param-type">string</td>
+              <td class="param-optional">optional</td>
+              <td class="param-desc">Associate this call with a project in your dashboard. Create projects at /app → Projects.</td>
+            </tr>
+            <tr>
+              <td class="param-name">options.endpoint_name</td>
+              <td class="param-type">string</td>
+              <td class="param-optional">optional</td>
+              <td class="param-desc">Label for the endpoint or feature making the call (e.g. "summarize", "chat", "classify"). Helps group costs by feature.</td>
+            </tr>
+            <tr>
+              <td class="param-name">options.metadata</td>
+              <td class="param-type">object</td>
+              <td class="param-optional">optional</td>
+              <td class="param-desc">Arbitrary key-value pairs attached to the log entry. Useful for user IDs, request IDs, environment flags. Values must be strings, numbers, or booleans.</td>
+            </tr>
+            <tr>
+              <td class="param-name">options.cost</td>
+              <td class="param-type">number</td>
+              <td class="param-optional">optional</td>
+              <td class="param-desc">Override the automatically calculated cost (in USD). Use this if you have a negotiated pricing agreement with a provider.</td>
+            </tr>
+            <tr>
+              <td class="param-name">options.provider</td>
+              <td class="param-type">string</td>
+              <td class="param-optional">optional</td>
+              <td class="param-desc">Override the auto-detected provider name. Useful when using proxy clients or custom OpenAI-compatible endpoints.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="doc-h3">Returns</h3>
+        <p class="doc-p">A <code>Promise&lt;T&gt;</code> that resolves to exactly the same value as the original API call. The tracking happens as a non-blocking side-effect and does not alter the response in any way.</p>
+
+        <div class="doc-divider" style="margin: 28px 0;"></div>
+
+        <h2 class="doc-h2"><code>calculateCost(model, promptTokens, completionTokens)</code></h2>
+        <p class="doc-p">Utility function to compute the USD cost for a given number of tokens without making an API call. Useful for cost estimation before making a request.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">typescript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">function</span> <span class="fn">calculateCost</span>(
+  <span class="prop">model</span>: <span class="cl">string</span>,
+  <span class="prop">promptTokens</span>: <span class="cl">number</span>,
+  <span class="prop">completionTokens</span>: <span class="cl">number</span>
+): <span class="cl">number</span> | <span class="kw">null</span>
+
+<span class="cm">// Example</span>
+<span class="kw">const</span> cost = <span class="fn">calculateCost</span>(<span class="str">'gpt-4o'</span>, <span class="num">500</span>, <span class="num">200</span>)
+<span class="cm">// → 0.004 (USD)</span>
+
+<span class="cm">// Returns null if the model is not in Nerovai's pricing table</span>
+<span class="kw">const</span> unknown = <span class="fn">calculateCost</span>(<span class="str">'my-custom-model'</span>, <span class="num">100</span>, <span class="num">50</span>)
+<span class="cm">// → null</span></div>
+        </div>
+
+        <div class="doc-divider" style="margin: 28px 0;"></div>
+
+        <h2 class="doc-h2">Environment Variables</h2>
+        <p class="doc-p">The SDK is configured entirely via environment variables. No config file needed.</p>
+
+        <table class="env-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Required</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="env-name">NEROVAI_API_KEY</td>
+              <td class="param-type">required</td>
+              <td class="param-type">-</td>
+              <td class="param-desc">Your Nerovai API key. Get one from /app → Settings → API Keys.</td>
+            </tr>
+            <tr>
+              <td class="env-name">NEROVAI_ENDPOINT</td>
+              <td class="param-optional">optional</td>
+              <td class="param-type">https://api.nerovai.com</td>
+              <td class="param-desc">Override the API endpoint. Used for proxies, testing, or future self-hosted deployments.</td>
+            </tr>
+            <tr>
+              <td class="env-name">NEROVAI_SILENT</td>
+              <td class="param-optional">optional</td>
+              <td class="param-type">false</td>
+              <td class="param-desc">Set to <code>true</code> to suppress all SDK console output including warnings and errors.</td>
+            </tr>
+            <tr>
+              <td class="env-name">NEROVAI_DEBUG</td>
+              <td class="param-optional">optional</td>
+              <td class="param-type">false</td>
+              <td class="param-desc">Set to <code>true</code> to enable verbose debug logging. Useful when troubleshooting missing data.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="doc-divider"></div>
+
+      <section class="doc-section" id="api-reference">
+        <div class="doc-eyebrow">REST API</div>
+        <h1 class="doc-h1">API Reference</h1>
+        <p class="doc-lead">The Nerovai REST API is available at <code>https://api.nerovai.com</code>. All endpoints require your API key in the <code>x-api-key</code> header unless noted otherwise.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-text">The SDK handles all API calls for you. You only need to use the REST API directly if you're building a custom integration, calling from a language without an SDK, or building automation around your usage data.</div>
+        </div>
+
+        <h2 class="doc-h2">Endpoints</h2>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Path</th>
+              <th>Auth</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="method-badge method-post">POST</span></td>
+              <td class="api-path">/api/logs</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Record a single AI API call. Used by the SDK internally.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/logs</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">List log entries. Supports filtering by project_id, provider, model, date range, and pagination.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/logs/:id</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Retrieve a single log entry by ID.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/projects</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">List all projects in your account.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-post">POST</span></td>
+              <td class="api-path">/api/projects</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Create a new project.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/stats/summary</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Get aggregated spend, call count, and token totals for a date range.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/stats/daily</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Get per-day spend and call count - powers the dashboard chart.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-post">POST</span></td>
+              <td class="api-path">/api/billing/create-checkout</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Create a Stripe checkout session. Returns a <code>{ url }</code> to redirect the user.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/billing/portal</td>
+              <td class="auth-yes">✓ required</td>
+              <td class="param-desc">Create a Stripe billing portal session for managing subscriptions and invoices.</td>
+            </tr>
+            <tr>
+              <td><span class="method-badge method-get">GET</span></td>
+              <td class="api-path">/api/health</td>
+              <td class="auth-no">open</td>
+              <td class="param-desc">Returns <code>{"status":"ok"}</code>. Use for uptime monitoring.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 class="doc-h2">POST /api/logs - example</h2>
+        <p class="doc-p">Record an AI call manually. All fields except <code>provider</code> and <code>model</code> are optional.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined">curl -X POST https://api.nerovai.com/api/logs \
+  -H <span class="str">"x-api-key: YOUR_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "provider":    "openai",
+    "model":       "gpt-4o",
+    "tokens_in":   500,
+    "tokens_out":  200,
+    "cost_usd":    0.005,
+    "latency_ms":  340,
+    "project_id":  "my-project",
+    "endpoint_name": "summarize",
+    "metadata":    { "user_id": "u_123" }
+  }'</span></div>
+        </div>
+
+        <h3 class="doc-h3">Response</h3>
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">json</span>
+          </div>
+          <div class="code-block code-block-joined">{
+  <span class="prop">"id"</span>:          <span class="str">"log_01hx..."</span>,
+  <span class="prop">"provider"</span>:    <span class="str">"openai"</span>,
+  <span class="prop">"model"</span>:       <span class="str">"gpt-4o"</span>,
+  <span class="prop">"tokens_in"</span>:   <span class="num">500</span>,
+  <span class="prop">"tokens_out"</span>:  <span class="num">200</span>,
+  <span class="prop">"cost_usd"</span>:    <span class="num">0.005</span>,
+  <span class="prop">"latency_ms"</span>:  <span class="num">340</span>,
+  <span class="prop">"project_id"</span>:  <span class="str">"my-project"</span>,
+  <span class="prop">"created_at"</span>:  <span class="str">"2026-03-16T14:22:01.000Z"</span>
+}</div>
+        </div>
+
+        <h2 class="doc-h2">GET /api/logs - query parameters</h2>
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Param</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="api-path">project_id</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">Filter by project.</td>
+            </tr>
+            <tr>
+              <td class="api-path">provider</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">Filter by provider (e.g. "openai", "anthropic").</td>
+            </tr>
+            <tr>
+              <td class="api-path">model</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">Filter by model name.</td>
+            </tr>
+            <tr>
+              <td class="api-path">from</td>
+              <td class="param-type">ISO 8601</td>
+              <td class="param-desc">Start of date range (inclusive).</td>
+            </tr>
+            <tr>
+              <td class="api-path">to</td>
+              <td class="param-type">ISO 8601</td>
+              <td class="param-desc">End of date range (inclusive).</td>
+            </tr>
+            <tr>
+              <td class="api-path">limit</td>
+              <td class="param-type">number</td>
+              <td class="param-desc">Number of results per page (default 50, max 500).</td>
+            </tr>
+            <tr>
+              <td class="api-path">cursor</td>
+              <td class="param-type">string</td>
+              <td class="param-desc">Pagination cursor from previous response.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="doc-divider"></div>
+
+      <section class="doc-section" id="providers">
+        <div class="doc-eyebrow">Integrations</div>
+        <h1 class="doc-h1">Providers</h1>
+        <p class="doc-lead">Nerovai supports 9 major AI providers out of the box. Provider detection is automatic - we parse the API base URL and response structure to identify who made the call.</p>
+
+        <table class="provider-table">
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Key Models</th>
+              <th>Auto Cost Calc</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="provider-name">OpenAI</td>
+              <td class="param-desc">gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo, o1, o1-mini, text-embedding-3-small, text-embedding-3-large</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Anthropic</td>
+              <td class="param-desc">claude-3-5-sonnet, claude-3-5-haiku, claude-3-opus, claude-3-sonnet, claude-3-haiku</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Google</td>
+              <td class="param-desc">gemini-1.5-pro, gemini-1.5-flash, gemini-2.0-flash, gemini-2.5-pro, gemini-pro, text-embedding-004</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Mistral</td>
+              <td class="param-desc">mistral-large, mistral-small, mistral-nemo, codestral, mixtral-8x22b, pixtral-large</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">DeepSeek</td>
+              <td class="param-desc">deepseek-chat, deepseek-reasoner, deepseek-coder</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Groq</td>
+              <td class="param-desc">llama-3.3-70b-versatile, llama-3.1-8b-instant, gemma2-9b-it, mixtral-8x7b-32768, whisper-large-v3</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Kimi (Moonshot)</td>
+              <td class="param-desc">moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k, kimi-latest</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Cohere</td>
+              <td class="param-desc">command-r-plus, command-r, command-light, embed-multilingual-v3.0, rerank-english-v3.0</td>
+              <td class="check-yes">✓</td>
+            </tr>
+            <tr>
+              <td class="provider-name">Perplexity</td>
+              <td class="param-desc">llama-3.1-sonar-large-128k-online, llama-3.1-sonar-small-128k-online, llama-3.1-sonar-large-128k-chat</td>
+              <td class="check-yes">✓</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-text"><strong>New provider?</strong> If you're using a provider or model not listed here, you can still log calls manually via the REST API or use <code>options.provider</code> and <code>options.cost</code> to supply values explicitly. Request new providers on our <a href="https://github.com/nerovai/nerovai/issues" style="color:var(--accent);">GitHub issues</a>.</div>
+        </div>
+
+        <h2 class="doc-h2">OpenAI-compatible providers</h2>
+        <p class="doc-p">Many providers expose an OpenAI-compatible API (Together, Fireworks, Anyscale, LM Studio, Ollama, etc.). These work automatically with Nerovai when you pass <code>options.provider</code> to identify the correct pricing:</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <span class="code-lang">javascript</span>
+            <button class="code-copy" onclick="copyCode(this)">Copy</button>
+          </div>
+          <div class="code-block code-block-joined"><span class="kw">const</span> together = <span class="kw">new</span> <span class="cl">OpenAI</span>({
+  <span class="prop">apiKey</span>:  process.env.TOGETHER_API_KEY,
+  <span class="prop">baseURL</span>: <span class="str">'https://api.together.xyz/v1'</span>
+})
+
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">track</span>(
+  together.chat.completions.<span class="fn">create</span>({ <span class="prop">model</span>: <span class="str">'meta-llama/Llama-3-70b-chat-hf'</span>, ... }),
+  {
+    <span class="prop">provider</span>: <span class="str">'together'</span>,
+    <span class="prop">cost</span>:     <span class="num">0.0009</span> <span class="cm">// manually specify cost if not in our table</span>
+  }
+)</div>
+        </div>
+      </section>
+
+      <div class="doc-divider"></div>
+
+      <section class="doc-section" id="faq">
+        <div class="doc-eyebrow">Help</div>
+        <h1 class="doc-h1">FAQ</h1>
+        <p class="doc-lead">Answers to the most common questions about Nerovai.</p>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Do you store my prompts or responses?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            No - never. Nerovai only intercepts the metadata from your API calls: the model name, token counts, cost, latency, project ID, endpoint name, and any metadata you choose to pass. The actual content of your prompts, system messages, and completions is never extracted, transmitted, or stored. We architected it this way deliberately - we believe you should never have to trust a third party with your users' data. Our SDK's source is open for inspection on GitHub.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Which AI providers are supported?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            We currently support OpenAI, Anthropic, Google (Gemini), Mistral, DeepSeek, Groq, Kimi (Moonshot), Cohere, and Perplexity. Provider detection is fully automatic - we identify the provider from the API endpoint and response structure so you don't need to configure anything. For OpenAI-compatible providers (Together, Fireworks, Anyscale, Ollama, etc.), pass <code>options.provider</code> and optionally <code>options.cost</code> to manually set the values. We add new providers within days of significant launches - request one on our GitHub issues page.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            How does automatic cost calculation work?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            We maintain an internal pricing table that maps model IDs to their per-token input and output costs, sourced from each provider's official pricing page. When a tracked call completes, we read the token counts from the usage object in the response, multiply them by the current rates, and record the result. Our pricing table is updated within hours of any provider announcement. If a model isn't in our table yet, <code>calculateCost()</code> returns <code>null</code> and you can provide a manual <code>cost</code> override in <code>track()</code> options. We also expose cost overrides at the project level for teams with negotiated rates.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I self-host Nerovai?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            Self-hosting is on our public roadmap, planned for the Team+ tier in Q3 2026. The backend is built on Node.js, PostgreSQL, and Redis, which should make self-hosting straightforward for teams with existing infra. Today, all data is transmitted to our managed cloud over TLS 1.3. If self-hosting is a hard compliance requirement, reach out to us at team@nerovai.com - we're happy to discuss timelines, NDAs, and early-access options for qualifying teams.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What happens after I sign up?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            After signing up at /app, you'll land on your dashboard and see your API key immediately. Copy it into your environment as <code>NEROVAI_API_KEY</code>, run <code>npm install nerovai</code>, and wrap your first AI call with <code>track()</code>. Your dashboard starts populating within 5-10 seconds of the first tracked request. No onboarding call is required. If you run into any issues, we're on Discord (link in the dashboard) and respond to every message, usually within the hour during business days.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    (function() {
+      const saved = localStorage.getItem('nerovai-theme') || 'dark';
+      applyTheme(saved);
+    })();
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('nerovai-theme', theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    const sections = document.querySelectorAll('.doc-section');
+    const links = document.querySelectorAll('.sidebar-link');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            links.forEach(link => {
+              link.classList.toggle('active', link.dataset.target === id);
+            });
+          }
+        });
+      },
+      {
+        rootMargin: '-52px 0px -60% 0px',
+        threshold: 0
+      }
+    );
+
+    sections.forEach(s => observer.observe(s));
+
+    function scrollTo(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    }
+
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    function copyCode(btn) {
+      const block = btn.closest('.code-wrap').querySelector('.code-block');
+      const text = block ? block.innerText : '';
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      }).catch(() => {
+        btn.textContent = 'Failed';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+  </script>
+</body>
+</html>
